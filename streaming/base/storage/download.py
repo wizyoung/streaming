@@ -34,6 +34,7 @@ https://cloud.google.com/docs/authentication/external/set-up-adc to set up Appli
 Credentials. See also https://docs.mosaicml.com/projects/mcli/en/latest/resources/secrets/gcp.html.
 """
 
+enable_s3_multithread = os.getenv('S3_MULTITHREAD', 'false').lower().strip() in ['true', '1']
 
 def download_from_s3(remote: str, local: str, timeout: float) -> None:
     """Download a file from remote AWS S3 (or any S3 compatible object store) to local.
@@ -78,7 +79,7 @@ def download_from_s3(remote: str, local: str, timeout: float) -> None:
                          obj.path.lstrip('/'),
                          local,
                          ExtraArgs=extra_args,
-                         Config=TransferConfig(use_threads=False))
+                         Config=TransferConfig(use_threads=enable_s3_multithread))
 
     import boto3
     from boto3.s3.transfer import TransferConfig
